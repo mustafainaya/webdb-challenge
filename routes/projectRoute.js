@@ -16,10 +16,11 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
 	try {
-		const project = await db('projects').where({ project_id: req.params.id }).first();
-		const action = await db('actions').where({ id: req.params.id });
+		const project = await db('projects').where({ id: req.params.id }).first();
+		const action = await db('actions').where({ project_id: req.params.id });
 		if (project) {
-			res.status(200).json({ projectOb: { project, action } });
+			let projectObj = { ...project, actions: action };
+			res.status(200).json({ projectObj });
 		} else {
 			res.status(404).json('Does Not Exist');
 		}
