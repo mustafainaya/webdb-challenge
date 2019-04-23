@@ -16,12 +16,15 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
 	try {
-		const project = await db('projects')
-			.select('*')
-			.from('projects')
-			.innerJoin('actions', 'projects.id', 'actions.project_id')
-			.where({ project_id: req.params.id });
-		res.status(200).json(project);
+		const project = await db('projects').where({ project_id: req.params.id }).first();
+		const action = await db('actions').where({ id: req.params.id });
+		if (project) {
+			res.status(200).json({ projectOb: { project, action } });
+		} else {
+			res.status(404).json('Does Not Exist');
+		}
+
+		console.log(project);
 	} catch (err) {
 		res.status(500).json(err);
 	}
